@@ -1,15 +1,32 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Fields, Type};
+use syn::{parse_macro_input, Data, DeriveInput, Fields};
 
 /// Derive macro for Extractable trait
 /// 
+/// **NOTE**: This is a stub implementation demonstrating how the macro would work.
+/// For production use, this would need to be expanded with better error handling
+/// and support for generic types.
+///
 /// Generates code to extract renderable primitives from a struct by walking
 /// its fields and checking for the Renderable trait.
 /// 
+/// # Required Imports
+///
+/// The generated code requires these traits to be in scope:
+/// - `Extractable` - The main trait being implemented
+/// - `ExtractHelper` - Helper trait for extraction logic  
+/// - `Primitive` - The primitive type being extracted
+///
+/// ```ignore
+/// use game_engine::{Extractable, ExtractHelper, Primitive};
+/// ```
+///
 /// # Usage
 /// 
 /// ```ignore
+/// use game_engine::{Extractable, ExtractHelper, Primitive};
+///
 /// #[derive(Extractable)]
 /// pub struct SoccerGame {
 ///     #[extract]
@@ -43,11 +60,9 @@ pub fn derive_extractable(input: TokenStream) -> TokenStream {
                         if has_extract {
                             let field_name = &field.ident;
                             let field_name_str = field_name.as_ref().unwrap().to_string();
-                            let field_type = &field.ty;
                             
-                            // Generate extraction code based on field type
-                            let extract_code = generate_extract_code(field_name_str, field_type);
-                            
+                            // NOTE: This assumes ExtractHelper is in scope
+                            // Production version could use a configurable path
                             Some(quote! {
                                 ExtractHelper::extract(&self.#field_name, #field_name_str, "", &mut __result);
                             })
@@ -72,6 +87,10 @@ pub fn derive_extractable(input: TokenStream) -> TokenStream {
         }
     };
     
+    // NOTE: This assumes Primitive and ExtractHelper are in scope
+    // A production version could accept paths as macro attributes:
+    // #[derive(Extractable)]
+    // #[extractable(primitive = "my_crate::Primitive")]
     let expanded = quote! {
         impl #impl_generics Extractable for #name #ty_generics #where_clause {
             fn extract_renderables(&self) -> ::std::collections::HashMap<String, Primitive> {
@@ -87,10 +106,4 @@ pub fn derive_extractable(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
-fn generate_extract_code(field_name: String, field_type: &Type) -> proc_macro2::TokenStream {
-    // For simplicity, we assume the user provides ExtractHelper trait
-    // that knows how to extract different types
-    quote! {
-        ExtractHelper::extract(&self.#field_name, #field_name, "", &mut __result);
-    }
-}
+

@@ -845,8 +845,28 @@ fn test_extractable_trait_approach() {
 // APPROACH 3: TYPE REGISTRY PATTERN (CONCEPTUAL)
 // ============================================================================
 
-// Note: This would require additional crates like `inventory` or `linkme`
-// and is shown here conceptually
+// This approach demonstrates using a global type registry with crates like
+// `inventory` or `linkme` to register Renderable types at compile time.
+//
+// The idea is:
+// 1. Each Renderable type registers itself in a global registry
+// 2. The custom serializer checks the registry by type name or TypeId
+// 3. When a match is found, call the registered extraction function
+//
+// Pros:
+// - Can work with serde's Serializer trait
+// - Automatic registration via proc macro
+//
+// Cons:
+// - Requires unsafe code for type erasure
+// - Type name matching is fragile
+// - Additional dependencies (inventory ~100KB)
+// - More complex than recommended approach
+//
+// This is commented out because:
+// - It's conceptual/educational
+// - Requires external crates not in dependencies
+// - Not the recommended approach (custom derive is simpler)
 
 /*
 use inventory;
