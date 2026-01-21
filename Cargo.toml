@@ -4,6 +4,7 @@ members = [
     "serde_core",
     "serde_derive",
     "serde_derive_internals",
+    "serde_extractable_derive",
     "test_suite",
 ]
 resolver = "2"

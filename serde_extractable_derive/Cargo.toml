@@ -1,0 +1,13 @@
+[package]
+name = "serde_extractable_derive"
+version = "0.1.0"
+edition = "2021"
+description = "Derive macro for extracting renderable types from game state"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true, features = ["full", "extra-traits"] }
